@@ -1,85 +1,75 @@
-import { getCdn, getLoopbackCdn } from './shared';
-import { Millennium } from '@steambrew/webkit';
+import {getCdn, getLoopbackCdn} from "./shared";
+import {Millennium} from "@steambrew/webkit";
 
 export function injectPreferences() {
-    const sidebarContainer = document.querySelector('.two_column.left');
-    const mainContainer = document.querySelector('.two_column.right');
+    const sidebarContainer = document.querySelector(".two_column.left");
+    const mainContainer = document.querySelector(".two_column.right");
 
-    const augmentedSteamOptions = document.createElement('div');
-    augmentedSteamOptions.style.cursor = 'pointer';
-    augmentedSteamOptions.classList.add('nav_item');
-    augmentedSteamOptions.innerHTML = `<img class="ico16" src="${getLoopbackCdn('img/logo/as48.png')}" alt="logo"> <span>Augmented Steam</span>`;
+    const augmentedSteamOptions = Object.assign(document.createElement("div"), {
+        style: {cursor: "pointer"},
+        innerHTML: `<img class="ico16" src="${getLoopbackCdn("img/logo/as48.png")}" alt="logo"> <span>Augmented Steam</span>`,
+        class: "nav_item"
+    });
 
     sidebarContainer.appendChild(augmentedSteamOptions);
 
-    augmentedSteamOptions.addEventListener('click', async () => {
-        sidebarContainer.querySelectorAll('.active').forEach((element) => {
-            element.classList.remove('active');
+    augmentedSteamOptions.addEventListener("click", async () => {
+        sidebarContainer.querySelectorAll(".active").forEach((element) => {
+            element.classList.remove("active");
         });
-        augmentedSteamOptions.classList.toggle('active');
+        augmentedSteamOptions.classList.toggle("active");
 
         const url = new URL(window.location.href);
-        url.search = ''; // Removes all searchParams from the URL
-        url.searchParams.set('augmented-steam', 'true');
-        window.history.replaceState({}, '', url.href);
+        url.search = ""; // Removes all searchParams from the URL
+        url.searchParams.set("augmented-steam", "true");
+        window.history.replaceState({}, "", url.href);
 
-        let optionsHtml = await (await fetch(`${getLoopbackCdn('html/options.html')}`)).text();
-        optionsHtml = optionsHtml.replace('<base target="_blank">', '');
+        const optionsHtml = (await (await fetch(`${getLoopbackCdn("html/options.html")}`)).text()).replace('<base target="_blank">', "");
         mainContainer.innerHTML = warningHTML + optionsHtml;
 
-        await Promise.all([
-            loadStyle(),
-            loadScript(),
-        ]);
+        await Promise.all([loadStyle(), loadScript()]);
 
-        document.dispatchEvent(new Event('initAugmentedSteamOptions'));
+        document.dispatchEvent(new Event("initAugmentedSteamOptions"));
 
-        const button = (await Millennium.findElement(document, '.buttons.svelte-1nzirk3'))[0];
-        const clearCacheButton = document.createElement('button');
-        clearCacheButton.onclick = () => {
-            if (!window.confirm('Are you sure you want to clear the cache?')) {
-                return;
-            }
+        const button = (await Millennium.findElement(document, ".buttons.svelte-1nzirk3"))[0];
+        const clearCacheButton = Object.assign(document.createElement("button"), {
+            onclick: () => {
+                if (window.confirm("Are you sure you want to clear the cache?")) {
+                    window.augmentedBrowser.runtime.sendMessage({ action: "cache.clear" }, () => {
+                        window.location.reload();
+                    });
+                }
+            },
+        });
 
-            window.augmentedBrowser.runtime.sendMessage({action: 'cache.clear'}, () => {
-                window.location.reload();
-            });
-        };
+        const span = Object.assign(document.createElement("span"), {
+            dataset: {tooltipText: "This may fix some issues with the plugin."}, innerText: "Clear cache",
+        });
 
-        const span = document.createElement('span');
-        span.dataset.tooltipText = 'This may fix some issues with the plugin.';
-        span.innerText = 'Clear cache';
         clearCacheButton.appendChild(span);
 
         button.appendChild(clearCacheButton);
     });
 
-    const url = new URL(window.location.href);
-    if (url.searchParams.get('augmented-steam') === 'true') {
-        augmentedSteamOptions.click();
-    }
+    if (new URL(window.location.href).searchParams.get("augmented-steam") === "true") augmentedSteamOptions.click();
 }
 
 async function loadStyle() {
-    let styleContent = await (await fetch(getLoopbackCdn('css/options.css'))).text();
-    styleContent = styleContent.replace(/(?<!transparent);/g, ' !important;');
+    const styleContent = (await fetch(getLoopbackCdn("css/options.css")).then((res) => res.text())).replace(/(?<!transparent);/g, " !important;");
 
-    const style = document.createElement('style');
-    style.innerHTML = styleContent;
-    document.head.appendChild(style);
+    document.head.appendChild(Object.assign(document.createElement("style"), {innerHTML: styleContent}),);
 }
 
 async function loadScript() {
-    let scriptContent = await (await fetch(getCdn('js/options.js'))).text();
-    scriptContent += '\n//# sourceURL=' + getCdn('js/options.js');
-    scriptContent = scriptContent
-        .replaceAll('chrome', 'augmentedBrowser')
-        .replaceAll('document.addEventListener("DOMContentLoaded"', 'document.addEventListener("initAugmentedSteamOptions"')
-        .replaceAll('../img/logo/logo.svg', getLoopbackCdn('img/logo/logo.svg'));
+    const scriptContent = (await (await fetch(getCdn("js/options.js"))).text())
+        .concat(`\n//# sourceURL=${getCdn("js/options.js")}`)
+        .replaceAll("chrome", "augmentedBrowser")
+        .replaceAll('document.addEventListener("DOMContentLoaded"', 'document.addEventListener("initAugmentedSteamOptions"',)
+        .replaceAll("../img/logo/logo.svg", getLoopbackCdn("img/logo/logo.svg"));
 
-    const script = document.createElement('script');
-    script.innerHTML = scriptContent;
-    document.head.appendChild(script);
+    document.head.appendChild(Object.assign(document.createElement("script"), {
+        innerHTML: scriptContent,
+    }),);
 }
 
 const warningHTML = `

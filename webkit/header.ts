@@ -1,22 +1,22 @@
-import { callable } from '@steambrew/webkit';
-import { Logger } from './shared';
+import {callable} from "@steambrew/webkit";
+import {Logger} from "./shared";
 
 function getIdFromAppConfig(): string | null {
-    const appConfig = document.querySelector('#application_config');
+    const appConfig = document.querySelector("#application_config");
 
     if (!appConfig) {
-        Logger.Warn('appConfig not found');
+        Logger.Warn("appConfig not found");
         return null;
     }
 
-    return JSON.parse(appConfig.getAttribute('data-userinfo')).steamid;
+    return JSON.parse(appConfig.getAttribute("data-userinfo")).steamid;
 }
 
 function getIdFromScript(context: Node): string | null {
-    const script = document.evaluate('//script[contains(text(), \'g_steamID\')]', context, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    const script = document.evaluate("//script[contains(text(), 'g_steamID')]", context, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null,).singleNodeValue;
 
     if (!script) {
-        Logger.Warn('script steamid not found');
+        Logger.Warn("script steamid not found");
         return null;
     }
 
@@ -24,17 +24,15 @@ function getIdFromScript(context: Node): string | null {
 }
 
 async function getIdFromBackend(): Promise<string | null> {
-    const backend = callable<[], string>('GetSteamId');
+    const backend = callable<[], string>("GetSteamId");
     return await backend();
 }
 
 export async function createFakeSteamHeader() {
-    let steamid = getIdFromAppConfig() ?? getIdFromScript(document) ?? await getIdFromBackend();
-    if (!steamid) {
-        throw new Error('Could not get steamid, augmented steam will not work.');
-    }
+    let steamid = getIdFromAppConfig() ?? getIdFromScript(document) ?? (await getIdFromBackend());
+    if (!steamid) throw new Error("Could not get steamid, augmented steam will not work.");
 
-    const isReactPage = document.querySelector('[data-react-nav-root]') !== null;
+    const isReactPage = document.querySelector("[data-react-nav-root]") !== null;
 
     if (isReactPage) {
         // Wait on react to load
@@ -45,21 +43,19 @@ export async function createFakeSteamHeader() {
             if (root) {
                 break;
             }
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
         }
 
-        if (performance.now() - start > 5000) {
-            throw new Error('Timed out waiting for react root');
-        }
+        if (performance.now() - start > 5000) throw new Error("Timed out waiting for react root");
 
-        const node = document.createElement('header');
-        node.innerHTML = reactFakeHeader.replaceAll('%user_id%', steamid);
-        const pageContent = document.querySelector('#StoreTemplate');
+        const node = document.createElement("header");
+        node.innerHTML = reactFakeHeader.replaceAll("%user_id%", steamid);
+        const pageContent = document.querySelector("#StoreTemplate");
         pageContent.prepend(node);
     } else {
-        const node = document.createElement('div');
-        node.innerHTML = legacyFakeHeader.replaceAll('%user_id%', steamid);
-        const pageContent = document.querySelector('.responsive_page_content') ?? document.querySelector('.headerOverride');
+        const node = document.createElement("div");
+        node.innerHTML = legacyFakeHeader.replaceAll("%user_id%", steamid);
+        const pageContent = document.querySelector(".responsive_page_content") ?? document.querySelector(".headerOverride");
         pageContent.prepend(node);
     }
 }

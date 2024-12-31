@@ -3,3 +3,5 @@ node_modules/
 .millennium/
 build/
 !bun.lockb
+.idea
+pnpm-lock.yaml
