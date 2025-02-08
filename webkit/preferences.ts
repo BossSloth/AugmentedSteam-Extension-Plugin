@@ -67,6 +67,11 @@ async function loadStyle() {
     const style = document.createElement('style');
     style.innerHTML = styleContent;
     document.head.appendChild(style);
+
+    // Append Steam override styles
+    const steamOverrideStyles = document.createElement('style');
+    steamOverrideStyles.innerHTML = steamContainerOverrideStyles;
+    document.head.appendChild(steamOverrideStyles);
 }
 
 async function loadScript() {
@@ -98,4 +103,18 @@ const warningHTML = `
     All community settings don't work.
 </p>
 </div>
+`;
+
+const steamContainerOverrideStyles = `
+<style>
+    // Override steam preferences container max width when augmented steam options are present
+    #main_content:has(#options) {
+        width: 1155px;
+    }
+
+    // Override steam preferences right column overflow when augmented steam options are present
+    .two_column.right:has(#options) {
+        overflow: auto;
+    }
+</style>
 `;
