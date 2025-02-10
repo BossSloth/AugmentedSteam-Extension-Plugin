@@ -91,10 +91,7 @@ const warningHTML = `
 <div style="   
     background-color: rgba(217,116,0,0.5);
     border-radius: 15px;
-    position: absolute;
-    margin-top: -10rem;
     padding: 1.5rem;
-    width: 35%;
     color: white;
 ">
 <h3>WARNING!</h3>
@@ -105,16 +102,14 @@ const warningHTML = `
 </div>
 `;
 
+// Override steam preferences container max-width & overflow when augmented steam options are present
 const steamContainerOverrideStyles = `
-<style>
-    // Override steam preferences container max width when augmented steam options are present
-    #main_content:has(#options) {
-        width: 1155px;
-    }
+#main_content:has(#options) {
+    width: auto;
+    max-width: 1155px;
+}
 
-    // Override steam preferences right column overflow when augmented steam options are present
-    .two_column.right:has(#options) {
-        overflow: auto;
-    }
-</style>
+.two_column.right:has(#options) {
+    overflow: auto;
+}
 `;
