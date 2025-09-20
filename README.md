@@ -1,12 +1,19 @@
 # Augmented Steam Plugin for Millennium
-This plugin ports the functionality of the [Augmented Steam Browser Extension](https://github.com/IsThereAnyDeal/AugmentedSteam) to the Steam client using Millennium. 
+
+> [!CAUTION]
+> This plugin has been archived and is no longer maintained. No further updates will be provided.
+
+> [!CAUTION]
+> Please use the [Extendium](https://github.com/BossSloth/Extendium) plugin instead, which offers more features and is actively maintained.
+
+This plugin ports the functionality of the [Augmented Steam Browser Extension](https://github.com/IsThereAnyDeal/AugmentedSteam) to the Steam client using Millennium.
 
 ## Features
 
 > Pretty much all the Augmented Steam extension's features are included in this plugin.
 
 See the [AugmentedSteam Browser Extension](https://github.com/IsThereAnyDeal/AugmentedSteam) for more details about
-each feature or the [extension page](https://augmentedsteam.com/) for more images.  
+each feature or the [extension page](https://augmentedsteam.com/) for more images.
 Also some features from the extension are ported to the library see
 [Library extra details](#extra-library-details)
 
@@ -37,7 +44,7 @@ To configure the plugin:
    <br>2.5. Or just click on your profile top right, then Account details
 3. Look for the "Augmented Steam" button and click it
 
-Alternatively, you can access the options page directly by entering this URL in your Steam client:  
+Alternatively, you can access the options page directly by entering this URL in your Steam client:
 https://store.steampowered.com/account/?augmented-steam=true
 
 Here you can customize various features and behaviors of the Augmented Steam plugin to suit your preferences. Just like
