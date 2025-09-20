@@ -1,3 +1,10 @@
+## [1.1.8](https://github.com/BossSloth/AugmentedSteam-Extension-Plugin/compare/v1.1.7...v1.1.8) (2025-04-14)
+
+
+### Bug Fixes
+
+* add metadata.json to release zip ([305350d](https://github.com/BossSloth/AugmentedSteam-Extension-Plugin/commit/305350da76f10180459beed55f1f4f1475a29345))
+
 ## [1.1.7](https://github.com/BossSloth/AugmentedSteam-Extension-Plugin/compare/v1.1.6...v1.1.7) (2025-03-29)
 
 
